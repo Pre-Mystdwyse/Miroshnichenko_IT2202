@@ -64,8 +64,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
 void _decrementCounter() {
   setState(() {
-
-    _counter--;
+if (_counter>0){
+  _counter--;
+}
+else{
+}
   });
 }
 
@@ -122,12 +125,26 @@ void _decrementCounter() {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            const SizedBox(height: 21),
+            const SizedBox(),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                IconButton(onPressed: _decrementCounter, icon: const Icon(Icons.remove), tooltip: "Уменьшить", color: Colors.red),
-                IconButton(onPressed: _incrementCounter, icon: Icon(Icons.add), tooltip: "Увеличить", color: Colors.green), //текст для проверочного коммита
+               InkWell(onTap: _decrementCounter, borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(8)),
+                  child: Icon(Icons.remove, color: Colors.black)
+                  ),
+              ),
+              SizedBox(width: 16),
+              
+              InkWell(onTap: _incrementCounter, borderRadius: BorderRadius.circular(8),
+               child: Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(8)),
+                child: Icon(Icons.add, color: Colors.black)
+                ),
+              ),
               ],
             ),
             TextButton(onPressed: _resetCounter, style: TextButton.styleFrom(foregroundColor: Colors.blueGrey), child: const Text('Сбросить')),
