@@ -127,7 +127,7 @@ void _decrementCounter() {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 IconButton(onPressed: _decrementCounter, icon: const Icon(Icons.remove), tooltip: "Уменьшить", color: Colors.red),
-                IconButton(onPressed: _incrementCounter, icon: Icon(Icons.add), tooltip: "Увеличить", color: Colors.green),
+                IconButton(onPressed: _incrementCounter, icon: Icon(Icons.add), tooltip: "Увеличить", color: Colors.green), //текст для проверочного коммита
               ],
             ),
             TextButton(onPressed: _resetCounter, style: TextButton.styleFrom(foregroundColor: Colors.blueGrey), child: const Text('Сбросить')),
