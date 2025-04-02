@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SimpleList extends StatelessWidget {
-  const SimpleList({Key? key}) : super(key: key);
+  const SimpleList({super.key});
 
   @override
   Widget build(BuildContext context) {

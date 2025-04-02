@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MyForm extends StatefulWidget {
-  const MyForm({Key? key}) : super(key: key);
+  const MyForm({super.key});
 
   @override
   State<StatefulWidget> createState() => MyFormState();
@@ -19,7 +19,6 @@ class MyFormState extends State<MyForm> {
   final Color mainColor = Colors.purple;
   final Color lightPurple = Color.fromARGB(255, 237, 231, 246);
   final Color darkPurple = Color.fromARGB(255, 74, 20, 140);
-  final Color appBarColor = Color.fromARGB(255, 106, 27, 154);
 
   @override
   Widget build(BuildContext context) {
@@ -90,13 +89,15 @@ class MyFormState extends State<MyForm> {
             ),
           ),
           validator: (value) {
-            if (value == null || value.isEmpty) return 'Поле не может быть пустым';
-            if (double.tryParse(value) == null) return 'Введите число';
-            return null;
-          },
-          onSaved: (value) => label.startsWith('Шир')
-              ? _savedWidth = double.parse(value!)
-              : _savedHeight = double.parse(value!),
+          if (value == null || value.isEmpty) return 'Поле не может быть пустым';
+          final parsedValue = double.tryParse(value);
+          if (parsedValue == null) return 'Введите число';
+          if (parsedValue <= 0) return 'Число должно быть больше нуля';
+          return null;
+        },
+        onSaved: (value) => label.startsWith('Шир')
+            ? _savedWidth = double.parse(value!)
+            : _savedHeight = double.parse(value!),
         ),
       ],
     );
