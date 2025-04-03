@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class InfinityMathList extends StatelessWidget {
-  const InfinityMathList({Key? key}) : super(key: key);
+  const InfinityMathList({super.key});
 
   @override
   Widget build(BuildContext context) {
