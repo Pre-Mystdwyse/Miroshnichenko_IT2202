@@ -1,122 +1,260 @@
 import 'package:flutter/material.dart';
+import 'classes/Machine.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const CoffeeMachineApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class CoffeeMachineApp extends StatelessWidget {
+  const CoffeeMachineApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Кофемашина',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        primarySwatch: Colors.brown,
+        useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const CoffeeMachineScreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class CoffeeMachineScreen extends StatefulWidget {
+  const CoffeeMachineScreen({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<CoffeeMachineScreen> createState() => _CoffeeMachineScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _CoffeeMachineScreenState extends State<CoffeeMachineScreen> {
+  final Machine _machine = Machine();
+  final TextEditingController _resourceController = TextEditingController();
 
-  void _incrementCounter() {
+  void _addResource(String type) {
+    double value = double.tryParse(_resourceController.text) ?? 0;
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      switch (type) {
+        case 'coffee':
+          _machine.coffeeBeans += value;
+          break;
+        case 'milk':
+          _machine.milk += value;
+          break;
+        case 'water':
+          _machine.water += value;
+          break;
+        case 'cash':
+          _machine.cash += value;
+          break;
+      }
     });
+    _resourceController.clear();
+  }
+
+  void _makeCoffee() {
+    bool success = false;
+    setState(() {
+      success = _machine.makingCoffee();
+    });
+
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Ваш кофе готов!')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Недостаточно ресурсов (кофе: 50г, вода: 100мл, молоко: 20мл) или денег (минимум 100₽) для приготовления кофе')),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: const Text('Кофемашина'),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Card(
+              elevation: 8.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [const Color.fromARGB(255, 64, 12, 122), const Color.fromARGB(255, 167, 88, 231)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Кофейные зерна: ${_machine.coffeeBeans} г',
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Молоко: ${_machine.milk} мл',
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Вода: ${_machine.water} мл',
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Деньги: ${_machine.cash} ₽',
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _resourceController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: 'Количество ресурса',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                filled: true,
+                fillColor: const Color.fromARGB(255, 255, 255, 255),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () => _addResource('coffee'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromARGB(255, 115, 50, 153),
+                            foregroundColor: const Color.fromARGB(255, 255, 255, 255),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: const Text('Добавить зёрна'),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () => _addResource('milk'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromARGB(255, 115, 50, 153),
+                            foregroundColor: const Color.fromARGB(255, 255, 255, 255),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: const Text('Добавить молоко'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () => _addResource('water'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromARGB(255, 115, 50, 153),
+                            foregroundColor: const Color.fromARGB(255, 255, 255, 255),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: const Text('Добавить воду'),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () => _addResource('cash'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromARGB(255, 115, 50, 153),
+                            foregroundColor: const Color.fromARGB(255, 255, 255, 255),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: const Text('Добавить деньги'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _makeCoffee,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 115, 50, 153),
+                foregroundColor: const Color.fromARGB(255, 255, 255, 255),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text(
+                'Приготовить кофе',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+            const SizedBox(height: 20),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  _machine.resetResources();
+                });
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.red.shade700,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(color: Colors.red.shade700),
+                ),
+              ),
+              child: const Text(
+                'Сбросить ресурсы',
+                style: TextStyle(fontSize: 16),
+              ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
